@@ -1,0 +1,79 @@
+{
+  "properties": {
+    "connectionParameters": {
+      "znunyBaseUrl": {
+        "type": "string",
+        "uiDefinition": {
+          "displayName": "Znuny base URL",
+          "description": "Full base URL of your Znuny/OTRS instance, including scheme (e.g. https://helpdesk.contoso.com). No trailing slash.",
+          "tooltip": "Example: https://znuny.mycompany.com",
+          "constraints": {
+            "tabIndex": 1,
+            "clearText": true,
+            "required": "true"
+          }
+        }
+      },
+      "webServiceName": {
+        "type": "string",
+        "uiDefinition": {
+          "displayName": "Generic Interface web service name",
+          "description": "Name of the REST web service in Znuny (default RESTConnector). Change if your admin used another name.",
+          "tooltip": "Often RESTConnector — see Znuny Admin → Web Services",
+          "constraints": {
+            "tabIndex": 2,
+            "clearText": true,
+            "required": "false"
+          }
+        }
+      },
+      "agentUserLogin": {
+        "type": "string",
+        "uiDefinition": {
+          "displayName": "Agent login (UserLogin)",
+          "description": "API agent username sent in the JSON body on every call (Znuny best practice).",
+          "tooltip": "Dedicated API agent account recommended",
+          "constraints": {
+            "tabIndex": 3,
+            "clearText": true,
+            "required": "true"
+          }
+        }
+      },
+      "agentPassword": {
+        "type": "securestring",
+        "uiDefinition": {
+          "displayName": "Agent password",
+          "description": "Password for the agent account (stored securely; injected into requests by the connector script).",
+          "tooltip": "Not shown in flow runs as plain parameters",
+          "constraints": {
+            "tabIndex": 4,
+            "clearText": false,
+            "required": "true"
+          }
+        }
+      }
+    },
+    "iconBrandColor": "#0047AB",
+    "scriptOperations": [
+      "CreateTicket",
+      "UpdateTicket",
+      "GetTicket",
+      "SearchTickets",
+      "AddArticle"
+    ],
+    "capabilities": [],
+    "policyTemplateInstances": [
+      {
+        "templateId": "dynamichosturl",
+        "title": "Route to Znuny host",
+        "parameters": {
+          "x-ms-apimTemplateParameter.urlTemplate": "@connectionParameters('znunyBaseUrl')",
+          "x-ms-apimTemplate-operationName": []
+        }
+      }
+    ],
+    "publisher": "Power Platform Community",
+    "stackOwner": "Znuny / OTRS Community"
+  }
+}

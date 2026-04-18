@@ -1,0 +1,481 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Znuny (OTRS REST)",
+    "description": "Simplified actions for Znuny / OTRS Generic Interface REST. Connection stores your base URL and agent credentials; each action uses flat fields and maps to the native TicketCreate / TicketUpdate / TicketGet / TicketSearch operations. See README for web service setup.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Power Platform Connectors",
+      "url": "https://github.com/microsoft/PowerPlatformConnectors"
+    }
+  },
+  "host": "none",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/znuny/CreateTicket": {
+      "post": {
+        "operationId": "CreateTicket",
+        "summary": "Create a ticket",
+        "description": "Creates a ticket with an initial article. Maps to TicketCreate.",
+        "tags": [
+          "Tickets"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateTicketRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ticket created (normalized JSON; logical errors may appear as 4xx from the script).",
+            "schema": {
+              "$ref": "#/definitions/CreateTicketResponse"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorEnvelope"
+            }
+          }
+        }
+      }
+    },
+    "/znuny/UpdateTicket": {
+      "post": {
+        "operationId": "UpdateTicket",
+        "summary": "Update a ticket",
+        "description": "Updates ticket fields you supply. Maps to TicketUpdate.",
+        "tags": [
+          "Tickets"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateTicketRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TicketMutationResponse"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorEnvelope"
+            }
+          }
+        }
+      }
+    },
+    "/znuny/GetTicket": {
+      "post": {
+        "operationId": "GetTicket",
+        "summary": "Get a ticket",
+        "description": "Retrieves one ticket. Maps to TicketGet. Response shape follows Znuny (passthrough JSON).",
+        "tags": [
+          "Tickets"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetTicketRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorEnvelope"
+            }
+          }
+        }
+      }
+    },
+    "/znuny/SearchTickets": {
+      "post": {
+        "operationId": "SearchTickets",
+        "summary": "Search tickets",
+        "description": "Search with optional filters; merges ExtraFilters for advanced use. Maps to TicketSearch.",
+        "tags": [
+          "Tickets"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SearchTicketsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SearchTicketsResponse"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorEnvelope"
+            }
+          }
+        }
+      }
+    },
+    "/znuny/AddArticle": {
+      "post": {
+        "operationId": "AddArticle",
+        "summary": "Add article to ticket",
+        "description": "Adds a note/article to an existing ticket. Maps to TicketUpdate with an Article payload.",
+        "tags": [
+          "Tickets"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddArticleRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/AddArticleResponse"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorEnvelope"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "DynamicFieldItem": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string",
+          "description": "Dynamic field name"
+        },
+        "Value": {
+          "type": "string",
+          "description": "Dynamic field value"
+        }
+      },
+      "required": [
+        "Name",
+        "Value"
+      ]
+    },
+    "CreateTicketRequest": {
+      "type": "object",
+      "properties": {
+        "Title": {
+          "type": "string",
+          "description": "Ticket title"
+        },
+        "QueueID": {
+          "type": "string",
+          "description": "Queue ID"
+        },
+        "State": {
+          "type": "string",
+          "description": "Ticket state (e.g. open, new)"
+        },
+        "PriorityID": {
+          "type": "string",
+          "description": "Priority ID"
+        },
+        "CustomerUser": {
+          "type": "string",
+          "description": "Customer user login or email"
+        },
+        "Type": {
+          "type": "string",
+          "description": "Optional ticket type"
+        },
+        "ServiceID": {
+          "type": "string",
+          "description": "Optional service ID"
+        },
+        "ArticleSubject": {
+          "type": "string",
+          "description": "First article subject (defaults to Title if omitted)"
+        },
+        "ArticleBody": {
+          "type": "string",
+          "description": "First article body"
+        },
+        "ArticleCommunicationChannel": {
+          "type": "string",
+          "description": "Internal, Phone, or Mail",
+          "default": "Internal"
+        },
+        "ArticleContentType": {
+          "type": "string",
+          "description": "MIME type for article body",
+          "default": "text/plain; charset=utf8"
+        },
+        "AttachmentFilename": {
+          "type": "string"
+        },
+        "AttachmentContentType": {
+          "type": "string"
+        },
+        "AttachmentContentBase64": {
+          "type": "string",
+          "description": "Base64 file content (or plain text; script may auto-encode)"
+        },
+        "DynamicFields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DynamicFieldItem"
+          }
+        }
+      },
+      "required": [
+        "Title",
+        "QueueID",
+        "State",
+        "PriorityID",
+        "CustomerUser",
+        "ArticleBody"
+      ]
+    },
+    "CreateTicketResponse": {
+      "type": "object",
+      "properties": {
+        "TicketID": {
+          "type": "string"
+        },
+        "TicketNumber": {
+          "type": "string"
+        },
+        "ArticleID": {
+          "type": "string",
+          "description": "Present when returned by Znuny"
+        }
+      }
+    },
+    "UpdateTicketRequest": {
+      "type": "object",
+      "properties": {
+        "TicketID": {
+          "type": "string"
+        },
+        "Title": {
+          "type": "string"
+        },
+        "QueueID": {
+          "type": "string"
+        },
+        "State": {
+          "type": "string"
+        },
+        "PriorityID": {
+          "type": "string"
+        },
+        "Type": {
+          "type": "string"
+        },
+        "ServiceID": {
+          "type": "string"
+        },
+        "CustomerUser": {
+          "type": "string"
+        },
+        "DynamicFields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DynamicFieldItem"
+          }
+        }
+      },
+      "required": [
+        "TicketID"
+      ]
+    },
+    "TicketMutationResponse": {
+      "type": "object",
+      "properties": {
+        "TicketID": {
+          "type": "string"
+        },
+        "TicketNumber": {
+          "type": "string"
+        }
+      }
+    },
+    "GetTicketRequest": {
+      "type": "object",
+      "properties": {
+        "TicketID": {
+          "type": "string"
+        },
+        "IncludeDynamicFields": {
+          "type": "boolean",
+          "description": "Maps to DynamicFields=1 when true",
+          "default": false
+        },
+        "IncludeAllArticles": {
+          "type": "boolean",
+          "description": "Maps to AllArticles=1 when true",
+          "default": false
+        },
+        "IncludeAttachments": {
+          "type": "boolean",
+          "description": "Maps to Attachments=1 when true",
+          "default": false
+        }
+      },
+      "required": [
+        "TicketID"
+      ]
+    },
+    "SearchTicketsRequest": {
+      "type": "object",
+      "properties": {
+        "ServiceID": {
+          "type": "string"
+        },
+        "States": {
+          "type": "string",
+          "description": "Comma-separated state names (e.g. new,open)"
+        },
+        "Title": {
+          "type": "string",
+          "description": "Title search (Znuny may treat as pattern depending on server config)"
+        },
+        "ExtraFilters": {
+          "type": "object",
+          "description": "Additional TicketSearch fields merged into the JSON body (power users)"
+        }
+      }
+    },
+    "SearchTicketsResponse": {
+      "type": "object",
+      "properties": {
+        "TicketIDs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "AddArticleRequest": {
+      "type": "object",
+      "properties": {
+        "TicketID": {
+          "type": "string"
+        },
+        "Subject": {
+          "type": "string"
+        },
+        "Body": {
+          "type": "string"
+        },
+        "CommunicationChannel": {
+          "type": "string",
+          "default": "Internal"
+        },
+        "ContentType": {
+          "type": "string",
+          "default": "text/plain; charset=utf8"
+        },
+        "AttachmentFilename": {
+          "type": "string"
+        },
+        "AttachmentContentType": {
+          "type": "string"
+        },
+        "AttachmentContentBase64": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "TicketID",
+        "Subject",
+        "Body"
+      ]
+    },
+    "AddArticleResponse": {
+      "type": "object",
+      "properties": {
+        "TicketID": {
+          "type": "string"
+        },
+        "ArticleID": {
+          "type": "string"
+        }
+      }
+    },
+    "ErrorEnvelope": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {},
+  "security": [],
+  "tags": [
+    {
+      "name": "Tickets",
+      "description": "Ticket operations via Generic Interface REST"
+    }
+  ]
+}

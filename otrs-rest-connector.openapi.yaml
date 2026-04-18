@@ -1,0 +1,934 @@
+openapi: 3.1.0
+info:
+  title: OTRS REST API Documentation
+  description: >-
+    This documentation is focused around incoming REST calls. It provides you
+    example payloads with our best practices and field description for our
+    [Perl API specification](https://academy.otrs.com/doc/perl-api/).
+
+
+    Please be aware that every web service has to be configured from scratch and
+    depending on the configuration the endpoint may change. To use our
+    pre-configured web service take a look into
+    [this FAQ article](https://portal.otrs.com/otrs/index.pl?Action=AgentFAQZoom;ItemID=3170)
+    to download the configuration file.
+
+
+    There are three different options to authenticate on OTRS:
+
+    - Best practise: use an agent account (e.g. OTRS_API) and password inside
+    the REST payload as you can see below in all examples.
+
+    - Alternative: customer user login and password (please be aware that a
+    customer user has nearly no access to agent interface therefore you are
+    limited).
+
+    - AccessToken: see
+    [Kernel::GenericInterface::Operation::AccessToken::Create](https://academy.otrs.com/doc/perl-api/kernel-genericinterface-operation-accesstoken-create-pm)
+    and
+    [Kernel::GenericInterface::Operation::AccessToken::Get](https://academy.otrs.com/doc/perl-api/kernel-genericinterface-operation-accesstoken-get-pm)
+
+
+    ## Additional Information
+
+    - Attachments: OTRS is automatically converting all attachments to a Base64
+    code and can only receive and process Base64 code.
+
+    - You can map field and data values [using regular expression or XSLT mapping](https://academy.otrs.com/doc/admin/processes-automation/web-services/).
+
+    - Please note that a `200 OK` response only means that the connection is
+    successful. The operations can give you addition error messages as a `200 OK`
+    such as
+
+       ```
+       {
+         "Error":
+          {
+            "ErrorCode": "TicketCreate.MissingParameter",
+            "ErrorMessage": "TicketCreate: UserLogin, CustomerUserLogin or AccessToken is required!"
+          }
+       }
+       ```
+
+    - If you need support with your use case you can contact our sales via [OTRS Portal](portal.otrs.com) or sales@otrs.com.
+  version: 1.0.0
+servers:
+  - url: https://your-fqdn.managed-otrs.com
+paths:
+  /otrs/nph-genericinterface.pl/Webservice/RESTConnector/TicketCreate:
+    post:
+      tags:
+        - Ticket Management
+      summary: TicketCreate
+      description: >-
+        This example shows and describes the most used attributes. If you want
+        to see all options, take a look into
+        [Kernel::GenericInterface::Operation::Ticket::TicketCreate](https://academy.otrs.com/doc/perl-api/kernel-genericinterface-operation-ticket-ticketcreate-pm).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketCreate"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketSuccessful"
+        '500':
+          description: Connection error
+          content:
+            application/json: {}
+  /otrs/nph-genericinterface.pl/Webservice/RESTConnector/TicketUpdate:
+    post:
+      tags:
+        - Ticket Management
+      summary: TicketUpdate
+      description: >-
+        For updating objects you only have to send the information you want to
+        update, therefore the payload example is quiet small. In general you can
+        use most of the attributes shown in TicketCreate. To see all option take
+        a look into
+        [Kernel::GenericInterface::Operation::Ticket::TicketUpdate](https://academy.otrs.com/doc/perl-api/kernel-genericinterface-operation-ticket-ticketupdate-pm)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketUpdate"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketSuccessful"
+        '500':
+          description: Connection error
+          content:
+            application/json: {}
+  /otrs/nph-genericinterface.pl/Webservice/RESTConnector/TicketSearch:
+    post:
+      tags:
+        - Ticket Management
+      summary: TicketSearch
+      description: >-
+        Ticket search contains a huge amount of possible parameters including
+        time based ones. All parameters you add are a logical AND. To see all
+        posibilites take a look into
+        [Kernel::GenericInterface::Operation::Ticket::TicketSearch](https://academy.otrs.com/doc/perl-api/kernel-genericinterface-operation-ticket-ticketsearch-pm)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketSearch"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketSearchSuccessful"
+        '500':
+          description: Connection error
+          content:
+            application/json: {}
+  /otrs/nph-genericinterface.pl/Webservice/RESTConnector/TicketGet:
+    post:
+      tags:
+        - Ticket Management
+      summary: TicketGet
+      description: >-
+        Ticket get can give you all informations to a single ticket. Especially
+        with attachments the payload can get quiet large, therefore you have
+        different options to expand the output. To see all options take a look
+        into
+        [Kernel::GenericInterface::Operation::Ticket::TicketGet](https://academy.otrs.com/doc/perl-api/kernel-genericinterface-operation-ticket-ticketget-pm)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketGet"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketCreate"
+        '500':
+          description: Connection error
+          content:
+            application/json: {}
+  /otrs/nph-genericinterface.pl/Webservice/RESTConnector/CustomerUserCreate:
+    post:
+      tags:
+        - Customer User Management
+      summary: CustomerUserCreate
+      description: >-
+        This example shows and describes the most used attributes. If you want
+        to see all options, take a look into
+        [Kernel::GenericInterface::Operation::CustomerUser::CustomerUserCreate](https://academy.otrs.com/doc/perl-api/kernel-genericinterface-operation-customeruser-customerusercreate-pm)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerUserCreate"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerUserCreate"
+        '500':
+          description: Connection error
+          content:
+            application/json: {}
+  /otrs/nph-genericinterface.pl/Webservice/RESTConnector/CustomerUserUpdate:
+    post:
+      tags:
+        - Customer User Management
+      summary: CustomerUserUpdate
+      description: >-
+        For updating objects you only have to send the information you want to
+        update, therefore the payload example is quiet small. In general you can
+        use most of the attributes shown in customer company create. To see all
+        option take a look into
+        [Kernel::GenericInterface::Operation::CustomerUser::CustomerUserUpdate](https://academy.otrs.com/doc/perl-api/kernel-genericinterface-operation-customeruser-customeruserupdate-pm)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerUserUpdate"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerUserCreate"
+        '500':
+          description: Connection error
+          content:
+            application/json: {}
+  /otrs/nph-genericinterface.pl/Webservice/RESTConnector/CustomerUserGet:
+    post:
+      tags:
+        - Customer User Management
+      summary: CustomerUserGet
+      description: >-
+        With customer user get you see most of the customer user fields. There are
+        more options to get a larger response with e.g. personal settings. To see
+        these options take a look into
+        [Kernel::GenericInterface::Operation::CustomerUser::CustomerUserGet](https://academy.otrs.com/doc/perl-api/kernel-genericinterface-operation-customeruser-customeruserget-pm)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerUserGet"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerUserCreate"
+        '500':
+          description: Connection error
+          content:
+            application/json: {}
+  /otrs/nph-genericinterface.pl/Webservice/RESTConnector/CustomerCompanyCreate:
+    post:
+      tags:
+        - Customer Company Management
+      summary: CustomerCompanyCreate
+      description: >-
+        This example shows and describes the most used attributes. If you want
+        to see all options, take a look into
+        [Kernel::GenericInterface::Operation::CustomerCompany::CustomerCompanyCreate](https://academy.otrs.com/doc/perl-api/kernel-genericinterface-operation-customercompany-customercompanycreate-pm)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerCompanyCreate"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerCompanyCreate"
+        '500':
+          description: Connection error
+          content:
+            application/json: {}
+  /otrs/nph-genericinterface.pl/Webservice/RESTConnector/CustomerCompanyUpdate:
+    post:
+      tags:
+        - Customer Company Management
+      summary: CustomerCompanyUpdate
+      description: >-
+        For updating objects you only have to send the information you want to
+        update, therefore the payload example is quiet small. In general you can
+        use most of the attributes shown in customer company create. To see all
+        option take a look into
+        [Kernel::GenericInterface::Operation::CustomerCompany::CustomerCompanyUpdate](https://academy.otrs.com/doc/perl-api/kernel-genericinterface-operation-customercompany-customercompanyupdate-pm)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerCompanyUpdate"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerCompanyCreate"
+        '500':
+          description: Connection error
+          content:
+            application/json: {}
+  /otrs/nph-genericinterface.pl/Webservice/RESTConnector/CustomerCompanyGet:
+    post:
+      tags:
+        - Customer Company Management
+      summary: CustomerCompanyGet
+      description: >-
+        To see a full list with all options:
+        [Kernel::GenericInterface::Operation::CustomerCompany::CustomerCompanyGet](https://academy.otrs.com/doc/perl-api/kernel-genericinterface-operation-customercompany-customercompanyget-pm)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerCompanyGet"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerCompanyCreate"
+        '500':
+          description: Connection error
+          content:
+            application/json: {}
+  /otrs/nph-genericinterface.pl/Webservice/RESTConnector/ConfigItemCreate:
+    post:
+      tags:
+        - Configuration Item Management
+      summary: ConfigItemCreate
+      description: >-
+        Configuration items are highly individual. The `CIXMLData` contains your
+        individual class definition and is defined by your `Key` attribute.
+        Below you find the regarding class definition snipped for the vendor
+        attribute.
+
+
+        - Key: Vendor
+            Name: Vendor
+            Input:
+            MaxLength: 50
+            Size: 50
+            Type: Text
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConfigItemCreate"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConfigItemSuccessful"
+        '500':
+          description: Connection error
+          content:
+            application/json: {}
+  /otrs/nph-genericinterface.pl/Webservice/RESTConnector/ConfigItemUpdate:
+    post:
+      tags:
+        - Configuration Item Management
+      summary: ConfigItemUpdate
+      description: Only send data which you want to update.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConfigItemUpdate"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConfigItemSuccessful"
+        '500':
+          description: Connection error
+          content:
+            application/json: {}
+  /otrs/nph-genericinterface.pl/Webservice/RESTConnector/ConfigItemDelete:
+    post:
+      tags:
+        - Configuration Item Management
+      summary: ConfigItemDelete
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConfigItemDelete"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+        '500':
+          description: Connection error
+          content:
+            application/json: {}
+components:
+  schemas:
+    TicketUpdate:
+      type: object
+      properties:
+        UserLogin:
+          type: string
+          description: The login of an agent.
+          required: true
+          example: OTRS_API
+        Password:
+          type: string
+          required: true
+          description: The password of an agent.
+          example: secure!password2
+        TicketID:
+          type: string
+          required: true
+          description: The ID of a ticket.
+          example: 22
+        Ticket:
+          type: object
+          title: Ticket
+          properties:
+            PriorityID:
+              type: string
+              required: false
+              description: The Priority ID.
+              example: 3
+    TicketCreate:
+      type: object
+      properties:
+        UserLogin:
+          type: string
+          description: The login of an agent.
+          required: true
+          example: OTRS_API
+        Password:
+          type: string
+          required: true
+          description: The password of an agent.
+          example: secure!password2
+        TicketID:
+          type: string
+          required: true
+          description: The ID of a ticket.
+          example: 22
+        Ticket:
+          type: object
+          title: Ticket
+          properties:
+            Title:
+              type: string
+              required: true
+              description: The title of the ticket.
+              example: API Testticket
+            QueueID:
+              type: string
+              required: true
+              description: The queue ID.
+              example: 5
+            State:
+              type: string
+              required: true
+              description: The state of the ticket.
+              example: open
+            PriorityID:
+              type: string
+              required: true
+              description: The priority ID of the ticket.
+              example: 3
+            Type:
+              type: string
+              required: false
+              description: The type of the ticket.
+              example: Incident
+            CustomerUser:
+              type: string
+              required: true
+              description: The customer user of the ticket.
+              example: noreply@otrs.com
+            ServiceID:
+              type: string
+              required: false
+              description: The service ID of the ticket.
+              example: 42
+        Article:
+          type: object
+          title: Article
+          properties:
+            Subject:
+              type: string
+              required: true
+              description: The subject of the article.
+              example: API Testticket
+            CommunicationChannel:
+              type: string
+              required: true
+              description: Internal, Phone or Mail.
+              example: Internal
+            Body:
+              type: string
+              required: true
+              description: The body of the article.
+              example: This is my first ticket created through an API.
+            ContentType:
+              type: string
+              required: true
+              description: or text/html; charset=utf8
+              example: text/plain; charset=utf8
+            Attachment:
+              type: object
+              title: Attachment
+              properties:
+                Filename:
+                  type: string
+                  required: true
+                  description: The name of the attachment.
+                  example: SomeExample.pdf
+                ContentType:
+                  type: string
+                  required: true
+                  description: MIME type of the attachment.
+                  example: application/pdf
+                Content:
+                  type: string
+                  required: true
+                  description: The Base64 code of the attachment.
+                  example: some base64
+        DynamicField:
+          type: object
+          title: DynamicField
+          properties:
+            Name:
+              type: string
+              required: true
+              description: The name of the dynamic field.
+              example: Location
+            Value:
+              type: string
+              required: true
+              description: The value of the dynamic field.
+              example: Berlin
+    TicketSearch:
+      type: object
+      properties:
+        UserLogin:
+          type: string
+          description: The login of an agent.
+          required: true
+          example: OTRS_API
+        Password:
+          type: string
+          required: true
+          description: The password of an agent.
+          example: secure!password2
+        ServiceID:
+          type: string
+          required: true
+          description: The service ID of a ticket.
+          example: 22
+        State:
+          type: string
+          required: true
+          description: The state of a ticket.
+          example: new, open
+    TicketGet:
+      type: object
+      properties:
+        UserLogin:
+          type: string
+          description: The login of an agent.
+          required: true
+          example: OTRS_API
+        Password:
+          type: string
+          required: true
+          description: The password of an agent.
+          example: secure!password2
+        TicketID:
+          type: string
+          required: true
+          description: The ticket ID of a ticket.
+          example: 73342
+        DynamicFields:
+          type: string
+          required: false
+          description: Shows all dynamic field values.
+          example: 1
+        AllArticles:
+          type: string
+          required: false
+          description: Shows all articles.
+          example: 1
+        Attachments:
+          type: string
+          required: false
+          description: Shows all attachments.
+          example: 1
+    TicketSuccessful:
+      type: object
+      properties:
+        TicketID:
+          type: string
+          description: The ticket ID of a ticket.
+          example: 22
+        TicketNumber:
+          type: string
+          description: The ticket number of a ticket.
+          example: 2024022006000046
+        Error Message:
+          type: string
+          description: In case of an error.
+          example: UserLogin is not valid.
+    TicketSearchSuccessful:
+      type: object
+      properties:
+        TicketID:
+          type: array
+          description: The ticket IDs of a ticket.
+          example: 22, 12, 33, 168, 986
+        Error Message:
+          type: string
+          description: In case of an error.
+          example: UserLogin is not valid.
+    CustomerUserCreate:
+      type: object
+      properties:
+        UserLogin:
+          type: string
+          description: The login of an agent.
+          required: true
+          example: OTRS_API
+        Password:
+          type: string
+          required: true
+          description: The password of an agent.
+          example: secure!password2
+        CustomerUserLogin:
+          type: string
+          required: true
+          description: The login of the user.
+          example: noreply@otrs.com
+        UserEmail:
+          type: string
+          required: true
+          description: The email of the user.
+          example: noreply@otrs.com
+        UserFirstname:
+          type: string
+          required: true
+          description: The first name of the user.
+          example: Carl
+        UserLastname:
+          type: string
+          required: true
+          description: The last name of the user.
+          example: Carl
+        UserCustomerID:
+          type: string
+          required: true
+          description: The company of the user.
+          example: Carl
+        ValidID:
+          type: string
+          required: true
+          description: The valid ID of the user.
+          example: 1
+    CustomerUserUpdate:
+      type: object
+      properties:
+        UserLogin:
+          type: string
+          description: The login of an agent.
+          required: true
+          example: OTRS_API
+        Password:
+          type: string
+          required: true
+          description: The password of an agent.
+          example: secure!password2
+        ID:
+          type: string
+          required: true
+          description: The login of the user.
+          example: noreply@otrs.com
+        UserEmail:
+          type: string
+          required: true
+          description: The email of the user.
+          example: noreply@otrs.com
+    CustomerUserGet:
+      type: object
+      properties:
+        UserLogin:
+          type: string
+          description: The login of an agent.
+          required: true
+          example: OTRS_API
+        Password:
+          type: string
+          required: true
+          description: The password of an agent.
+          example: secure!password2
+        CustomerUser:
+          type: string
+          required: true
+          description: The login of the user.
+          example: noreply@otrs.com
+    CustomerCompanyCreate:
+      type: object
+      properties:
+        UserLogin:
+          type: string
+          description: The login of an agent.
+          required: true
+          example: OTRS_API
+        Password:
+          type: string
+          required: true
+          description: The password of an agent.
+          example: secure!password2
+        CustomerID:
+          type: string
+          required: true
+          description: The ID of the customer.
+          example: OTRS
+        CustomerCompanyName:
+          type: string
+          required: true
+          description: The name of the customer.
+          example: OTRS AG
+        CustomerCompanyStreet:
+          type: string
+          required: true
+          description: The street of the company.
+          example: Zimmersmühlenweg 11
+        CustomerCompanyCity:
+          type: string
+          required: true
+          description: The city or location of the company.
+          example: Oberursel
+        CustomerCompanyURL:
+          type: string
+          required: true
+          description: Link to company home page.
+          example: https://www.otrs.com
+        CustomerCompanyComment:
+          type: string
+          required: true
+          description: Additional comment.
+          example: Some Comment
+        ValidID:
+          type: string
+          required: true
+          description: The valid ID of the company.
+          example: 1
+    CustomerCompanyUpdate:
+      type: object
+      properties:
+        UserLogin:
+          type: string
+          description: The login of an agent.
+          required: true
+          example: OTRS_API
+        Password:
+          type: string
+          required: true
+          description: The password of an agent.
+          example: secure!password2
+        CustomerID:
+          type: string
+          required: true
+          description: The login of the user.
+          example: noreply@otrs.com
+        CustomerCompanyName:
+          type: string
+          required: true
+          description: The name of the customer.
+          example: OTRS Inc
+    CustomerCompanyGet:
+      type: object
+      properties:
+        UserLogin:
+          type: string
+          description: The login of an agent.
+          required: true
+          example: OTRS_API
+        Password:
+          type: string
+          required: true
+          description: The password of an agent.
+          example: secure!password2
+        CustomerID:
+          type: string
+          required: true
+          description: The login of the user.
+          example: noreply@otrs.com
+    ConfigItemCreate:
+      type: object
+      properties:
+        UserLogin:
+          type: string
+          description: The login of an agent.
+          required: true
+          example: OTRS_API
+        Password:
+          type: string
+          required: true
+          description: The password of an agent.
+          example: secure!password2
+        ConfigItem:
+          type: object
+          title: Configuration Item
+          properties:
+            Class:
+              type: string
+              required: true
+              description: Class of the configuration item.
+              example: Computer
+            Name:
+              type: string
+              required: true
+              description: Name of the configuration item.
+              example: Carl Customers MacBook
+            DeplState:
+              type: string
+              required: true
+              description: Deployment state of the configuration item.
+              example: Production
+            InciState:
+              type: string
+              required: true
+              description: Incident state of the configuration item.
+              example: Operational
+            CIXMLData:
+              type: object
+              title: Individual Class Attributes
+              properties:
+                Vendor:
+                  type: string
+                  required: true
+                  description: Individual class attribute.
+                  example: Apple
+                Model:
+                  type: string
+                  required: true
+                  description: Individual class attribute.
+                  example: MacBook Pro 2021
+                Description:
+                  type: string
+                  required: true
+                  description: Individual class attribute.
+                  example: New PC for Carl, old one gets send back
+                Type:
+                  type: string
+                  required: true
+                  description: Individual class attribute.
+                  example: M1 Pro
+    ConfigItemUpdate:
+      type: object
+      properties:
+        UserLogin:
+          type: string
+          description: The login of an agent.
+          required: true
+          example: OTRS_API
+        Password:
+          type: string
+          required: true
+          description: The password of an agent.
+          example: secure!password2
+        ConfigItemID:
+          type: string
+          required: true
+          description: The ID of the configuration item.
+          example: 2
+        ConfigItem:
+          type: object
+          title: Configuration Item
+          properties:
+            Class:
+              type: string
+              required: true
+              description: Class of the configuration item.
+              example: Computer
+            Name:
+              type: string
+              required: true
+              description: Name of the configuration item.
+              example: Carl Customers MacBook
+            DeplState:
+              type: string
+              required: true
+              description: Deployment state of the configuration item.
+              example: Production
+            InciState:
+              type: string
+              required: true
+              description: Incident state of the configuration item.
+              example: Operational
+            CIXMLData:
+              type: object
+              title: Individual Class Attributes
+              properties:
+                Vendor:
+                  type: string
+                  required: true
+                  description: Individual class attribute.
+                  example: Apple
+    ConfigItemDelete:
+      type: object
+      properties:
+        UserLogin:
+          type: string
+          description: The login of an agent.
+          required: true
+          example: OTRS_API
+        Password:
+          type: string
+          required: true
+          description: The password of an agent.
+          example: secure!password2
+        ConfigItemID:
+          type: string
+          required: true
+          description: The ID of the configuration item.
+          example: 2
+    ConfigItemSuccessful:
+      type: object
+      properties:
+        ConfigItemID:
+          type: string
+          description: The ID of the configuration item.
+          example: 22
+        ConfigItemNumber:
+          type: string
+          description: The number of the configuration item.
+          example: 2024022006000046
+        Error Message:
+          type: string
+          description: In case of an error.
+          example: UserLogin is not valid.
